@@ -101,4 +101,10 @@ class Command(BaseCommand):
         return headers
 
     def _extractVal(self, key, row, headers):
-        return unicode(row[headers[key]])
+        val = row[headers[key]]
+        try:
+            return val.decode('utf-8')
+        except UnicodeDecodeError:
+            return val
+        except UnicodeEncodeError:
+            return val
