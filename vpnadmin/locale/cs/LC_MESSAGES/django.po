@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR vencax77@gmail.com, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-13 13:57+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: views.py:17
+msgid "total"
+msgstr "Součet"
+
+#: views.py:18
+msgid "fill the total amount on the invoice for check."
+msgstr "zadej celkovou hodnotu faktury, pro kontrolu vypočtu"
+
+#: views.py:28
+msgid "Given total does not match the parsed data total"
+msgstr "Celková hodnota faktury nesouhlasí se součtem zpracovaných dat!"
+
+#: views.py:55
+#, python-format
+msgid ""
+"data processed OK. %(count)i new invoices.\n"
+"Bill is <a href=\"%(billurl)s\">here</a>"
+msgstr ""
+"V pořádku zpracováno. %(count)i nových faktur.\n"
+"Faktura od operátora je <a href=\"%(billurl)s\">zde</a>"
+
+#: views.py:61
+msgid "Bill file can be found here"
+msgstr "Faktura od operátora je zde"
+
+#: views.py:80
+msgid "Phone services"
+msgstr "telefonní služby"
+
+#: views.py:81
+msgid "reinvoicing"
+msgstr "přefakturace"

@@ -1,0 +1,14 @@
+{% extends "site_base.html" %}
+
+{% block content %}
+{% if message %}{{ message|safe }}
+{% else %}
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<table>
+{{ form.as_table }}
+</table>
+<input type="submit" value="OK">
+</form>
+{% endif %}
+{% endblock %}
