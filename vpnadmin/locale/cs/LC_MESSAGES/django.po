@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-13 13:57+0200\n"
+"POT-Creation-Date: 2012-06-25 18:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: views.py:17
+#: models.py:17
+msgid "free minutes"
+msgstr "volné minuty"
+
+#: models.py:18
+msgid "has internet"
+msgstr "má internet"
+
+#: signals.py:15
+msgid "Phone services credit"
+msgstr "telefonní služby"
+
+#: views.py:20
 msgid "total"
 msgstr "Součet"
 
-#: views.py:18
+#: views.py:21
 msgid "fill the total amount on the invoice for check."
 msgstr "zadej celkovou hodnotu faktury, pro kontrolu vypočtu"
 
-#: views.py:28
+#: views.py:32
 msgid "Given total does not match the parsed data total"
 msgstr "Celková hodnota faktury nesouhlasí se součtem zpracovaných dat!"
 
-#: views.py:55
+#: views.py:59
 #, python-format
 msgid ""
 "data processed OK. %(count)i new invoices.\n"
@@ -38,14 +50,14 @@ msgstr ""
 "V pořádku zpracováno. %(count)i nových faktur.\n"
 "Faktura od operátora je <a href=\"%(billurl)s\">zde</a>"
 
-#: views.py:61
+#: views.py:65
 msgid "Bill file can be found here"
 msgstr "Faktura od operátora je zde"
 
-#: views.py:80
+#: views.py:87
 msgid "Phone services"
 msgstr "telefonní služby"
 
-#: views.py:81
+#: views.py:88
 msgid "reinvoicing"
 msgstr "přefakturace"
