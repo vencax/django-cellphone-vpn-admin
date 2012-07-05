@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from .signals import on_new_credit
 
-
 class PhoneServiceInfo(models.Model):
     """
     """

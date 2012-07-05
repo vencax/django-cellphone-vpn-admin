@@ -1,0 +1,47 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+{% if message %}{{ message|safe }}
+{% else %}
+<p>
+Faktura je <a href="{{ billurl }}">tady</a>.
+</p>
+
+<p>
+Vyparsovane info:
+</p>
+
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<table>
+<tr>
+	<th>{% trans 'subscriber' %}</th>
+	<th>{% trans 'number' %}</th>
+	<th>{% trans 'time inside VPN' %}</th>
+	<th>{% trans 'time outside VPN' %}</th>
+	<th>{% trans 'sms count' %}</th>
+	<th>{% trans 'above free minutes' %}</th>
+</tr>
+{% for tel, info in parsed.items %}
+<tr {% if info.4 > 0 %}style="background-color: red;"{% endif %}>
+	<td>{{ info.3.user.first_name }} {{ info.3.user.last_name }}</td>
+	<td>{{ tel }}</td>
+	<td>{{ info.0 }}</td>
+	<td>{{ info.1 }}</td>
+	<td>{{ info.2 }}</td>
+	<td>{{ info.4 }}</td>
+</tr>
+{% endfor %}
+<tr style="background-color: grey;">
+	<td colspan="2">TOTAL</td>
+	<td>{{ totals.inVPN }} ({{ totals.inVPNMins }} mins)</td>
+	<td>{{ totals.outVPN }} ({{ totals.outVPNMins }} mins)</td>
+	<td>{{ totals.sms }}</td>
+</tr>
+</table>
+<input type="submit" value="OK">
+</form>
+{% endif %}
+{% endblock %}

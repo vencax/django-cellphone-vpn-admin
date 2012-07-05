@@ -1,0 +1,16 @@
+{% load i18n %}
+
+{% blocktrans %}
+Hi,
+I am sending a report about your phone service state.
+Inside VPN: {{ inside }},
+Outside VPN: {{ ouside }},
+SMS count: {{ sms }},
+Minutes above free package {{ minsOver }}.
+
+Price for this month is {{ }}. Your current credit is {{ state }}.
+
+Operator invoice can be found here: http://{{ domain }}{{ billURL }}
+
+yours sincerely {{ domain }} robot.
+{% endblocktrans %}
