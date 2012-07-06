@@ -128,6 +128,7 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
                 'minsOver' : minsOver,
                 'state' : state,
                 'billURL' : billURL,
+                'price' : price,
                 'domain' : Site.objects.get_current(),
             })
             i.subscriber.user.email_user(ugettext('phone service info'), 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 17:48+0200\n"
+"POT-Creation-Date: 2012-07-06 06:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: models.py:17
+#: models.py:16
 msgid "free minutes"
 msgstr "volné minuty"
 
-#: models.py:18
+#: models.py:17
 msgid "has internet"
 msgstr "má internet"
 
@@ -29,19 +29,7 @@ msgstr "má internet"
 msgid "Phone services credit"
 msgstr "záloha na přefakturaci telefonních zlužeb"
 
-#: views.py:20
-msgid "total"
-msgstr "Součet"
-
-#: views.py:21
-msgid "fill the total amount on the invoice for check."
-msgstr "zadej celkovou hodnotu faktury, pro kontrolu vypočtu"
-
-#: views.py:32
-msgid "Given total does not match the parsed data total"
-msgstr "Celková hodnota faktury nesouhlasí se součtem zpracovaných dat!"
-
-#: views.py:59
+#: views.py:111
 #, python-format
 msgid ""
 "data processed OK. %(count)i new invoices.\n"
@@ -50,14 +38,69 @@ msgstr ""
 "V pořádku zpracováno. %(count)i nových faktur.\n"
 "Faktura od operátora je <a href=\"%(billurl)s\">zde</a>"
 
-#: views.py:65
-msgid "Bill file can be found here"
-msgstr "Faktura od operátora je zde"
+#: views.py:133
+msgid "phone service info"
+msgstr "infomace o čerpání telefonních služeb"
 
-#: views.py:87
+#: views.py:169
 msgid "Phone services"
 msgstr "telefonní služby"
 
-#: views.py:88
+#: views.py:170
 msgid "reinvoicing"
 msgstr "přefakturace"
+
+#: templates/vpnadmin/dataProcessed.html:20
+msgid "subscriber"
+msgstr "účastník"
+
+#: templates/vpnadmin/dataProcessed.html:21
+msgid "number"
+msgstr "číslo"
+
+#: templates/vpnadmin/dataProcessed.html:22
+msgid "time inside VPN"
+msgstr "v rámci VPN"
+
+#: templates/vpnadmin/dataProcessed.html:23
+msgid "time outside VPN"
+msgstr "mimo VPN"
+
+#: templates/vpnadmin/dataProcessed.html:24
+msgid "sms count"
+msgstr "počet SMS"
+
+#: templates/vpnadmin/dataProcessed.html:25
+msgid "above free minutes"
+msgstr "nad rámec volných minut"
+
+#: templates/vpnadmin/infoMail.html:3
+#, python-format
+msgid ""
+"\n"
+"Hi,\n"
+"I am sending a report about your phone service state.\n"
+"Inside VPN: %(inside)s,\n"
+"Outside VPN: %(ouside)s,\n"
+"SMS count: %(sms)s,\n"
+"Minutes above free package %(minsOver)s.\n"
+"\n"
+"Price for this month is %(price)s. Your current credit is %(state)s.\n"
+"\n"
+"Operator invoice can be found here: http://%(domain)s%(billURL)s\n"
+"\n"
+"yours sincerely %(domain)s robot.\n"
+msgstr ""
+"\n"
+"Zdravíčko,\n"
+"posílám info o stavu čerpání telefonních služeb.\n"
+"V rámci VPN: %(inside)s,\n"
+"Mimo VPN: %(ouside)s,\n"
+"Počet SMS: %(sms)s,\n"
+"Nad rámec objednaných volných minut %(minsOver)s.\n"
+"\n"
+"Tento měsíc platíte %(price)s. Aktuální kredit máte %(state)s.\n"
+"\n"
+"Fakturu od operátora najdete zde: http://%(domain)s%(billURL)s\n"
+"\n"
+"s pozdravem %(domain)s robot.\n"
