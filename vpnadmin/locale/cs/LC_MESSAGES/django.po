@@ -27,7 +27,7 @@ msgstr "má internet"
 
 #: signals.py:15
 msgid "Phone services credit"
-msgstr "záloha na přefakturaci telefonních zlužeb"
+msgstr "záloha na přefakturaci telefonních služeb"
 
 #: views.py:111
 #, python-format

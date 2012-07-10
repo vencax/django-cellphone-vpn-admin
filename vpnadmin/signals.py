@@ -17,6 +17,7 @@ def on_new_credit(sender, vs, ss, amount, creditInfo, **kwargs):
     
     invoice = Invoice(subscriber=companyInfo, paid=True)
     invoice.save()
-    invoice.items.add(Item(price=amount, 
-                           name=ugettext('Phone services credit')))
+    itemTitle = '%s (%i)' % (ugettext('Phone services credit'),
+                             companyInfo.phone)
+    invoice.items.add(Item(price=amount, name=itemTitle))
     invoice.send()
