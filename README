@@ -1,0 +1,13 @@
+App for managing reinvoicing of cell operator services among small VPN groups of users.
+
+Usage
+---------
+
+1. Add 'vpnadmin' application in the ``INSTALLED_APPS`` settings:
+   
+	INSTALLED_APPS = (
+	    # ...
+	    'vpnadmin',
+	)
+
+3. Run 'python manage.py migrate vpnadmin' to create DB tables (uses django-south).
