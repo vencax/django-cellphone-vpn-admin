@@ -2,13 +2,15 @@
 
 {% blocktrans %}
 Hi,
-I am sending a report about your phone service state.
-Inside VPN: {{ inside }},
-Outside VPN: {{ ouside }},
-SMS count: {{ sms }},
-Minutes above free package {{ minsOver }}.
+I am sending a report about your phone service state:
+{% endblocktrans %}
 
-Price for this month is {{ price }}. Your current credit is {{ state }}.
+{% for k, v in invoice.items %}
+{{ k }}: {{ v }} CZK
+{% endfor %}
+
+{% blocktrans %}
+Price for this month is {{ price }} CZK. Your current credit is {{ state }}.
 
 Operator invoice can be found here: http://{{ domain }}{{ billURL }}
 

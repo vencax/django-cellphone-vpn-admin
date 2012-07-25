@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-06 06:07+0200\n"
+"POT-Creation-Date: 2012-07-25 10:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,30 +25,38 @@ msgstr "volné minuty"
 msgid "has internet"
 msgstr "má internet"
 
-#: signals.py:15
+#: signals.py:20
 msgid "Phone services credit"
 msgstr "záloha na přefakturaci telefonních služeb"
 
-#: views.py:111
+#: views.py:126
 #, python-format
 msgid ""
-"data processed OK. %(count)i new invoices.\n"
+"%(count)i records processed OK.\n"
 "Bill is <a href=\"%(billurl)s\">here</a>"
 msgstr ""
-"V pořádku zpracováno. %(count)i nových faktur.\n"
+"%(count)i záznamů v pořádku zpracováno.\n"
 "Faktura od operátora je <a href=\"%(billurl)s\">zde</a>"
 
-#: views.py:133
+#: views.py:148
 msgid "phone service info"
 msgstr "infomace o čerpání telefonních služeb"
 
-#: views.py:169
-msgid "Phone services"
-msgstr "telefonní služby"
+#: views.py:172
+msgid "freeMins"
+msgstr "volné minuty"
 
-#: views.py:170
-msgid "reinvoicing"
-msgstr "přefakturace"
+#: views.py:173
+msgid "inVPN"
+msgstr "v rámci VPN"
+
+#: views.py:176
+msgid "extraMinutes"
+msgstr "mimo rámec volnách min."
+
+#: views.py:179
+msgid "extraSMS"
+msgstr "mimo rámec volných SMS"
 
 #: templates/vpnadmin/dataProcessed.html:20
 msgid "subscriber"
@@ -74,32 +82,36 @@ msgstr "počet SMS"
 msgid "above free minutes"
 msgstr "nad rámec volných minut"
 
+#: templates/vpnadmin/dataProcessed.html:26
+msgid "extras"
+msgstr "extra služby"
+
+#: templates/vpnadmin/dataProcessed.html:48
+msgid "Expected invoice price"
+msgstr "Předpokládaná výše faktury"
+
 #: templates/vpnadmin/infoMail.html:3
-#, python-format
 msgid ""
 "\n"
 "Hi,\n"
-"I am sending a report about your phone service state.\n"
-"Inside VPN: %(inside)s,\n"
-"Outside VPN: %(ouside)s,\n"
-"SMS count: %(sms)s,\n"
-"Minutes above free package %(minsOver)s.\n"
+"I am sending a report about your phone service state:\n"
+msgstr ""
 "\n"
-"Price for this month is %(price)s. Your current credit is %(state)s.\n"
+"Zdravíčko,\n"
+"posílám info o stavu čerpání telefonních služeb.\n"
+
+#: templates/vpnadmin/infoMail.html:12
+#, python-format
+msgid ""
+"\n"
+"Price for this month is %(price)s CZK. Your current credit is %(state)s.\n"
 "\n"
 "Operator invoice can be found here: http://%(domain)s%(billURL)s\n"
 "\n"
 "yours sincerely %(domain)s robot.\n"
 msgstr ""
 "\n"
-"Zdravíčko,\n"
-"posílám info o stavu čerpání telefonních služeb.\n"
-"V rámci VPN: %(inside)s,\n"
-"Mimo VPN: %(ouside)s,\n"
-"Počet SMS: %(sms)s,\n"
-"Nad rámec objednaných volných minut %(minsOver)s.\n"
-"\n"
-"Tento měsíc platíte %(price)s. Aktuální kredit máte %(state)s.\n"
+"Tento měsíc čerpáte za %(price)s. Aktuální kredit máte %(state)s.\n"
 "\n"
 "Fakturu od operátora najdete zde: http://%(domain)s%(billURL)s\n"
 "\n"

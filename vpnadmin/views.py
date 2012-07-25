@@ -10,6 +10,7 @@ from django.conf import settings
 from invoices.models import CompanyInfo, Invoice, Item
 from django.contrib.sites.models import Site
 from creditservices.signals import processCredit
+from valueladder.models import Thing
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views.generic.base import TemplateView
@@ -21,7 +22,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
 
+FREE_MINS_COUNT = getattr(settings, 'FREE_MINS_COUNT', 5000)
 FREE_SMS_COUNT = getattr(settings, 'FREE_SMS_COUNT', 1000)
+SMS_PRICE = getattr(settings, 'SMS_PRICE', 1)
 MINUTE_PRICE = getattr(settings, 'MINUTE_PRICE', 1.5)
 INTERNET_PRICE = getattr(settings, 'INTERNET_PRICE', 66)
 
@@ -75,7 +78,8 @@ class ProcessBillView(TemplateView):
         total = {
             'inVPN' : datetime.timedelta(),
             'outVPN' : datetime.timedelta(),
-            'sms' : 0
+            'sms' : 0,
+            'extra' : 0
         }
         for num, pinfo in parsed.items():
             try:
@@ -89,17 +93,28 @@ class ProcessBillView(TemplateView):
             inVPN = self._convertToTimeDelta(pinfo[0])
             outVPN = self._convertToTimeDelta(pinfo[1])
             aboveFreeMins = self._convertToMinutes(outVPN) - phoneInfo.minutes
-            newParsed[num] = (inVPN, outVPN, pinfo[2], cInfo, aboveFreeMins, phoneInfo)
+            newParsed[num] = (inVPN, outVPN, pinfo[2], cInfo, 
+                              aboveFreeMins, phoneInfo, pinfo[3])
+            if phoneInfo.internet:
+                del(pinfo[3]['data'])
             total['inVPN'] += inVPN
             total['outVPN'] += outVPN
             total['sms'] += pinfo[2]
+            total['extra'] += sum(pinfo[3].values())
         total['inVPNMins'] = self._convertToMinutes(total['inVPN'])
         total['outVPNMins'] = self._convertToMinutes(total['outVPN'])
+        
+        expectedInvoicePrice = total['extra'] + 5526
+        if total['outVPNMins'] > FREE_MINS_COUNT:
+            expectedInvoicePrice += ((total['outVPNMins'] - FREE_MINS_COUNT) * MINUTE_PRICE)
+        if total['sms'] > FREE_SMS_COUNT:
+            expectedInvoicePrice += ((total['sms'] - FREE_SMS_COUNT) * SMS_PRICE)
             
         return self.render_to_response({
             'billurl' : getBillUrl(), 
             'parsed' : newParsed,
-            'totals' : total
+            'totals' : total,
+            'expectedInvoicePrice' : expectedInvoicePrice
         })
     
     def post(self, request, *args, **kwargs):
@@ -108,69 +123,65 @@ class ProcessBillView(TemplateView):
         billurl = getBillUrl()
         self.processInvoices(invoices, billurl)
         
-        message = _('''data processed OK. %(count)i new invoices.
+        message = _('''%(count)i records processed OK.
 Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
                                               'billurl' :billurl}
         
         return self.render_to_response({'message' : message})
         
     def processInvoices(self, invoices, billURL):
-        for i, price, info in invoices:
-            inside, ouside, sms, minsOver = info
-            state = processCredit(i.subscriber, -price, i.currency,
-                                  i.contractor.bankaccount)
-            i.send()
+        for invoice, cinfo in invoices:
+            price = sum(invoice.values())
+            currency = Thing.objects.get_default()
+            contractor = CompanyInfo.objects.get_our_company_info()
+            state = processCredit(cinfo, -price, currency,
+                                  contractor.bankaccount)
+#            i.send()
             
             mailContent = render_to_string('vpnadmin/infoMail.html', {
-                'inside' : inside,
-                'ouside' : ouside,
-                'sms' : sms,
-                'minsOver' : minsOver,
+                'invoice' : invoice,
                 'state' : state,
                 'billURL' : billURL,
                 'price' : price,
                 'domain' : Site.objects.get_current(),
             })
-            i.subscriber.user.email_user(ugettext('phone service info'), 
+            cinfo.user.email_user(ugettext('phone service info'), 
                                          mailContent)
 
-    @commit_on_success
     def _processParsedData(self, parsed):
         invoices = []
         smsPerPerson = FREE_SMS_COUNT / PhoneServiceInfo.objects.all().count()
         for telnum, info in parsed.items():
-            self._processParsedRec(telnum, info, smsPerPerson, invoices)
+            invoices.append(self._processParsedRec(telnum, info, smsPerPerson))
         return invoices
 
-    def _processParsedRec(self, telnum, info, smsPerPerson, invoices):
+    def _processParsedRec(self, telnum, info, smsPerPerson):
         try:
-            cinfo = CompanyInfo.objects.get(phone=telnum)
-            if cinfo.user_id == settings.OUR_COMPANY_ID:
-                return  # do not generate invoice to self
-            
+            cinfo = CompanyInfo.objects.get(phone=telnum)            
             psi = PhoneServiceInfo.objects.get(user=cinfo.user)
             
-            inside, ouside, sms = info
+            inside, ouside, sms, extra = info
+            
             outsideVPN = self._convertToMinutes(
                 self._convertToTimeDelta(ouside))
+            insideVPN = self._convertToMinutes(
+                self._convertToTimeDelta(inside))
             minsOver = outsideVPN - psi.minutes
             smsOver = sms - smsPerPerson
              
-            invoice = Invoice(subscriber=cinfo, direction='o')
-            invoice.save()
-            
-            price = psi.minutes
+            invoice = {_('freeMins') + '(%i min)' % psi.minutes: psi.minutes,
+                       _('inVPN') + '(%i min)' % insideVPN : 0}            
             if minsOver > 0:
-                price += minsOver * MINUTE_PRICE
+                p = minsOver * MINUTE_PRICE
+                invoice[_('extraMinutes') + '(%i min)' % minsOver] = p
             if smsOver > 0:
-                price += smsOver
+                p = smsOver * SMS_PRICE
+                invoice[_('extraSMS') + '(%i ks)' % smsOver] = p 
             if psi.internet:
-                price += INTERNET_PRICE
-                
-            invoice.items.add(Item(price=0, name=ugettext('Phone services') +\
-                                    ' - ' + ugettext('reinvoicing')))
-            invoices.append((invoice, price, (inside, ouside, sms, minsOver)))
+                invoice['data'] = INTERNET_PRICE
             
+            invoice.update(extra)
+            return (invoice, cinfo)
         except Exception, e:
             logging.exception(e)
             
