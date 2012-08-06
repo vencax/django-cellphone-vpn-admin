@@ -2,12 +2,11 @@ import datetime
 import os
 import logging
 from django.views.generic.edit import FormView
-from django.db.transaction import commit_on_success
 from django import forms
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.forms.widgets import Textarea
 from django.conf import settings
-from invoices.models import CompanyInfo, Invoice, Item
+from invoices.models import CompanyInfo
 from django.contrib.sites.models import Site
 from creditservices.signals import processCredit
 from valueladder.models import Thing
