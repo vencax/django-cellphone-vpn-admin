@@ -27,14 +27,17 @@ class WholeBillParser(object):
         parsed = {}
         for line in parsedfile:
             line = unicode(line)
-            if self._inPersonInfo is True:
-                s = re.search(personInfoEndRe, line)
-                if s:
-                    self._inPersonInfo = False
+            
+            found = re.search(personInfoBeginRe, line)
+            if found:
+                if self._currTel:
                     parsed[self._currTel] = (self._timeInVPN, self._timeOutsideVPN, 
-                                             self._smsCount, self._extra)
+                                         self._smsCount, self._extra)
                     self._reset()
-                    continue                
+                self._currTel = int(found.group('tel').replace(' ', ''))
+                self._inPersonInfo = True
+                    
+            if self._inPersonInfo is True:
                 s = re.search(timeInVPNRe, line)
                 if s:
                     self._timeInVPN = s.group('time')
@@ -61,12 +64,7 @@ class WholeBillParser(object):
                     self._extra['data'] = float(s.group('val').replace(',', '.'))
                 s = re.search(mmsRe, line)    
                 if s:
-                    self._extra['mms'] = float(s.group('val').replace(',', '.'))                                       
-            else:
-                found = re.search(personInfoBeginRe, line)
-                if found:
-                    self._currTel = int(found.group('tel').replace(' ', ''))
-                    self._inPersonInfo = True
+                    self._extra['mms'] = float(s.group('val').replace(',', '.'))                  
         return parsed
     
     def _reset(self):
