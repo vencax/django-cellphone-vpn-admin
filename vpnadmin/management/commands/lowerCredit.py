@@ -33,4 +33,4 @@ class Command(BaseCommand):
         bankAccount = Invoice.get_my_company_info().bankaccount
         
         processCredit(companyInfo, -int(options['value']), 
-                      currency, bankAccount)
+                      currency, bankAccount, 'manual lower credit')
