@@ -176,11 +176,13 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
                 invoice[_('extraMinutes') + '(%i min)' % minsOver] = p
             if smsOver > 0:
                 p = smsOver * SMS_PRICE
-                invoice[_('extraSMS') + '(%i ks)' % smsOver] = p 
-            if psi.internet:
-                invoice['data'] = INTERNET_PRICE
+                invoice[_('extraSMS') + '(%i ks)' % smsOver] = p
             
             invoice.update(extra)
+            
+            if psi.internet:
+                invoice['data'] = INTERNET_PRICE
+                
             return (invoice, cinfo)
         except Exception, e:
             logging.exception(e)
