@@ -135,7 +135,7 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
             price = sum(invoice.values())
             currency = Thing.objects.get_default()
             contractor = CompanyInfo.objects.get_our_company_info()
-            details = ';'.join(['%s:%s' % (k, v) for k, v in invoice.items()])
+            details = '\n'.join(['%s:%s' % (k, v) for k, v in invoice.items()])
             state = processCredit(cinfo, -price, currency, details, 
                                   contractor.bankaccount)
             
