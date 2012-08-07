@@ -130,17 +130,18 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
         
     def processInvoices(self, invoices, billURL):
         for invoice, cinfo in invoices:
+            if cinfo.user_id == settings.OUR_COMPANY_ID:
+                continue
             price = sum(invoice.values())
             currency = Thing.objects.get_default()
             contractor = CompanyInfo.objects.get_our_company_info()
             details = ';'.join(['%s:%s' % (k, v) for k, v in invoice.items()])
-            state = processCredit(cinfo, -price, currency,
-                                  contractor.bankaccount, details)
-#            i.send()
+            state = processCredit(cinfo, -price, currency, details, 
+                                  contractor.bankaccount)
             
             mailContent = render_to_string('vpnadmin/infoMail.html', {
                 'invoice' : invoice,
-                'state' : state,
+                'state' : state.value,
                 'billURL' : billURL,
                 'price' : price,
                 'domain' : Site.objects.get_current(),
