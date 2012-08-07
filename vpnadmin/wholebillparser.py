@@ -10,7 +10,7 @@ personInfoBeginRe = u'Telefonní èíslo (?P<tel>[0-9]{3} [0-9]{3} [0-9]{3}) VPN
 timeInVPNRe = u'Celkem za Skupinová volání [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
 timOutsideVPNRe = u'Celkem za Hlasové sluby [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
 smsRe = u'Celkem za SMS sluby (?P<sms>[0-9]{1,})'
-thirrdPartyPay = u'Celkem za Platby tøetím stranám [0-9]{1,} (?P<val>[0-9]{1,},[0-9]{2})'
+thirrdPartyPay = u'Celkem za Platby tøetím stranám [0-9]{1,} ([0-9]{2}:[0-9]{2}:[0-9]{2} ){0,1}(?P<val>[0-9]{1,},[0-9]{2})'
 voiceRoaming = u'Celkem za Roaming - hlasové sluby [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) [^ ]{1,} [^ ]{1,} (?P<val>[0-9]{1,},[0-9]{2})'
 smsRoaming = u'Celkem za Roaming - SMS [0-9]{1,} [^ ]{1,} [^ ]{1,} (?P<val>[0-9]{1,},[0-9]{2})'
 data = u'Celkem za Data (?P<val>[0-9]{1,},[0-9]{2})'
@@ -36,7 +36,7 @@ class WholeBillParser(object):
                     self._reset()
                 self._currTel = int(found.group('tel').replace(' ', ''))
                 self._inPersonInfo = True
-                    
+                continue
             if self._inPersonInfo is True:
                 s = re.search(timeInVPNRe, line)
                 if s:
@@ -53,18 +53,28 @@ class WholeBillParser(object):
                 s = re.search(thirrdPartyPay, line)
                 if s:
                     self._extra['3rPartyPay'] = float(s.group('val').replace(',', '.'))
+                    continue
                 s = re.search(voiceRoaming, line)
                 if s:
                     self._extra['voiceRoaming'] = float(s.group('val').replace(',', '.'))
+                    continue
                 s = re.search(smsRoaming, line)
                 if s:
                     self._extra['smsRoaming'] = float(s.group('val').replace(',', '.'))
+                    continue
                 s = re.search(data, line)    
                 if s:
                     self._extra['data'] = float(s.group('val').replace(',', '.'))
+                    continue
                 s = re.search(mmsRe, line)    
                 if s:
-                    self._extra['mms'] = float(s.group('val').replace(',', '.'))                  
+                    self._extra['mms'] = float(s.group('val').replace(',', '.'))
+                    continue
+                    
+        if self._currTel:
+            parsed[self._currTel] = (self._timeInVPN, self._timeOutsideVPN, 
+                                 self._smsCount, self._extra)
+                                    
         return parsed
     
     def _reset(self):
