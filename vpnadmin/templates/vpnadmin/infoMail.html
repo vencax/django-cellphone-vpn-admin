@@ -1,7 +1,7 @@
 {% load i18n %}
 
-{% blocktrans %}
-Hi,
+{% blocktrans with cinfo.user.get_full_name as name and cinfo.phone as phone %}
+Hi {{ name }} ({{ phone }}),
 I am sending a report about your phone service state:
 {% endblocktrans %}
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-25 10:12+0200\n"
+"POT-Creation-Date: 2012-08-22 08:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr "má internet"
 msgid "Phone services credit"
 msgstr "přefakturace telefonních služeb"
 
-#: views.py:126
+#: views.py:142
 #, python-format
 msgid ""
 "%(count)i records processed OK.\n"
@@ -38,66 +38,70 @@ msgstr ""
 "%(count)i záznamů v pořádku zpracováno.\n"
 "Faktura od operátora je <a href=\"%(billurl)s\">zde</a>"
 
-#: views.py:148
+#: views.py:168
 msgid "phone service info"
 msgstr "infomace o čerpání telefonních služeb"
 
-#: views.py:172
+#: views.py:189
 msgid "freeMins"
 msgstr "volné minuty"
 
-#: views.py:173
+#: views.py:190
 msgid "inVPN"
-msgstr "v rámci VPN"
+msgstr "min. v rámci VPN"
 
-#: views.py:176
+#: views.py:191
+msgid "free SMS"
+msgstr "volné SMS"
+
+#: views.py:192 templates/vpnadmin/dataProcessed.html:36
+msgid "sms in vpn"
+msgstr "SMS v rámci VPN"
+
+#: views.py:195 templates/vpnadmin/dataProcessed.html:34
 msgid "extraMinutes"
-msgstr "mimo rámec volnách min."
+msgstr "mimo volné min."
 
-#: views.py:179
+#: views.py:198 templates/vpnadmin/dataProcessed.html:37
 msgid "extraSMS"
-msgstr "mimo rámec volných SMS"
+msgstr "mimo volné SMS"
 
-#: templates/vpnadmin/dataProcessed.html:20
+#: templates/vpnadmin/dataProcessed.html:30
 msgid "subscriber"
 msgstr "účastník"
 
-#: templates/vpnadmin/dataProcessed.html:21
+#: templates/vpnadmin/dataProcessed.html:31
 msgid "number"
 msgstr "číslo"
 
-#: templates/vpnadmin/dataProcessed.html:22
+#: templates/vpnadmin/dataProcessed.html:32
 msgid "time inside VPN"
-msgstr "v rámci VPN"
+msgstr "čas ve VPN"
 
-#: templates/vpnadmin/dataProcessed.html:23
+#: templates/vpnadmin/dataProcessed.html:33
 msgid "time outside VPN"
-msgstr "mimo VPN"
+msgstr "šas mimo VPN"
 
-#: templates/vpnadmin/dataProcessed.html:24
+#: templates/vpnadmin/dataProcessed.html:35
 msgid "sms count"
 msgstr "počet SMS"
 
-#: templates/vpnadmin/dataProcessed.html:25
-msgid "above free minutes"
-msgstr "nad rámec volných minut"
-
-#: templates/vpnadmin/dataProcessed.html:26
+#: templates/vpnadmin/dataProcessed.html:38
 msgid "extras"
 msgstr "extra služby"
 
-#: templates/vpnadmin/dataProcessed.html:48
+#: templates/vpnadmin/dataProcessed.html:64
 msgid "Expected invoice price"
 msgstr "Předpokládaná výše faktury"
 
 #: templates/vpnadmin/infoMail.html:3
 msgid ""
 "\n"
-"Hi,\n"
+"Hi %(name)s (%(phone)s),\n"
 "I am sending a report about your phone service state:\n"
 msgstr ""
 "\n"
-"Zdravíčko,\n"
+"Zdravíčko %(name)s (%(phone)s),\n"
 "posílám info o stavu čerpání telefonních služeb.\n"
 
 #: templates/vpnadmin/infoMail.html:12

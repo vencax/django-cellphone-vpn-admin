@@ -6,10 +6,11 @@ Created on May 30, 2012
 '''
 import re
 
-personInfoBeginRe = u'Telefonní èíslo (?P<tel>[0-9]{3} [0-9]{3} [0-9]{3}) VPN firma neomezenì - èlen'
+personInfoBeginRe = u'Telefonní èíslo (?P<tel>[0-9]{3} [0-9]{3} [0-9]{3}) '
 timeInVPNRe = u'Celkem za Skupinová volání [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
 timOutsideVPNRe = u'Celkem za Hlasové sluby [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
 smsRe = u'Celkem za SMS sluby (?P<sms>[0-9]{1,})'
+vpnSMS = u'AU VPN firma neomezenì (?P<sms>[0-9]{1,}) 0,00'
 thirrdPartyPay = u'Celkem za Platby tøetím stranám [0-9]{1,} ([0-9]{2}:[0-9]{2}:[0-9]{2} ){0,1}(?P<val>[0-9]{1,},[0-9]{2})'
 voiceRoaming = u'Celkem za Roaming - hlasové sluby [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) [^ ]{1,} [^ ]{1,} (?P<val>[0-9]{1,},[0-9]{2})'
 smsRoaming = u'Celkem za Roaming - SMS [0-9]{1,} [^ ]{1,} [^ ]{1,} (?P<val>[0-9]{1,},[0-9]{2})'
@@ -32,7 +33,7 @@ class WholeBillParser(object):
             if found:
                 if self._currTel:
                     parsed[self._currTel] = (self._timeInVPN, self._timeOutsideVPN, 
-                                         self._smsCount, self._extra)
+                                         self._smsCount, self._extra, self._vpnSmsCount)
                     self._reset()
                 self._currTel = int(found.group('tel').replace(' ', ''))
                 self._inPersonInfo = True
@@ -49,6 +50,10 @@ class WholeBillParser(object):
                 s = re.search(smsRe, line)
                 if s:
                     self._smsCount = int(s.group('sms'))
+                    continue
+                s = re.search(vpnSMS, line)
+                if s:
+                    self._vpnSmsCount = int(s.group('sms'))
                     continue
                 s = re.search(thirrdPartyPay, line)
                 if s:
@@ -73,14 +78,14 @@ class WholeBillParser(object):
                     
         if self._currTel:
             parsed[self._currTel] = (self._timeInVPN, self._timeOutsideVPN, 
-                                 self._smsCount, self._extra)
+                                 self._smsCount, self._extra, self._vpnSmsCount)
                                     
         return parsed
     
     def _reset(self):
         self._currTel = None
         self._timeInVPN = self._timeOutsideVPN = '00:00:00'
-        self._smsCount = 0
+        self._smsCount = self._vpnSmsCount = 0
         self._extra = {}
 
 if __name__ == '__main__':

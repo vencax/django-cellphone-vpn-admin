@@ -2,6 +2,16 @@
 
 {% load i18n %}
 
+{% block extrahead %}
+<style>
+table { border: 1px solid black; font-size: 12px; }
+.vpn { background: white; }
+.paid { background: #bbb; }
+.diff { background: #aaaacc; }
+.above { border: 1px solid red; background: red; }
+</style>
+{% endblock %}
+
 {% block content %}
 {% if message %}{{ message|safe }}
 {% else %}
@@ -21,18 +31,22 @@ Vyparsovane info:
 	<th>{% trans 'number' %}</th>
 	<th>{% trans 'time inside VPN' %}</th>
 	<th>{% trans 'time outside VPN' %}</th>
+	<th>{% trans 'extraMinutes' %}</th>
 	<th>{% trans 'sms count' %}</th>
-	<th>{% trans 'above free minutes' %}</th>
+	<th>{% trans 'sms in vpn' %}</th>
+	<th>{% trans 'extraSMS' %}</th>
 	<th>{% trans 'extras' %}</th>
 </tr>
 {% for tel, info in parsed.items %}
-<tr {% if info.4 > 0 %}style="background-color: red;"{% endif %}>
+<tr {% if info.4 > 0 %}class="above"{% endif %}>
 	<td>{{ info.3.user.first_name }} {{ info.3.user.last_name }}</td>
 	<td>{{ tel }}</td>
-	<td>{{ info.0 }}</td>
-	<td>{{ info.1 }}</td>
-	<td>{{ info.2 }}</td>
-	<td>{{ info.4 }}</td>
+	<td class="vpn">{{ info.0 }}</td>
+	<td class="paid">{{ info.1 }}</td>
+	<td class="diff">{{ info.4 }}</td>
+	<td class="paid">{{ info.2 }}</td>
+	<td class="vpn">{{ info.7 }}</td>
+	<td class="paid">{{ info.8 }}</td>
 	<td>{{ info.6 }}</td>
 </tr>
 {% endfor %}
@@ -41,6 +55,8 @@ Vyparsovane info:
 	<td>{{ totals.inVPN }} ({{ totals.inVPNMins }} mins)</td>
 	<td>{{ totals.outVPN }} ({{ totals.outVPNMins }} mins)</td>
 	<td>{{ totals.sms }}</td>
+	<td>_</td>
+	<td>_</td>
 	<td>_</td>
 	<td>{{ totals.extra }} CZK</td>
 </tr>
