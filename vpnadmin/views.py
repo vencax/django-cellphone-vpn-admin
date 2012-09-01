@@ -20,6 +20,9 @@ import StringIO
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from creditservices.models import CreditChangeRecord
 
 FREE_MINS_COUNT = getattr(settings, 'FREE_MINS_COUNT', 5000)
 FREE_SMS_COUNT = getattr(settings, 'FREE_SMS_COUNT', 1000)
@@ -211,3 +214,14 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
 
     def _convertToMinutes(self, time):
         return (time.days * 24 * 60) + (time.seconds / 60)
+    
+class InfoView(TemplateView):
+    template_name = 'vpnadmin/info.html'
+    
+    def get_context_data(self, **kwargs):
+        chageRecords = CreditChangeRecord.objects.filter(user=self.user)
+        return {'credRecords': chageRecords, 'vpnuser': self.user}
+        
+    def get(self, request, *args, **kwargs):
+        self.user = get_object_or_404(User, id=kwargs['uid'])
+        return super(InfoView, self).get(request, *args, **kwargs)

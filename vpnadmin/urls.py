@@ -1,8 +1,9 @@
 
 from django.conf.urls import patterns, url
-from .views import UploadBillView, ProcessBillView
+import views
 
 urlpatterns = patterns('',
-    url(r'^$', UploadBillView.as_view(), name='inputForm'),
-    url(r'^process/', ProcessBillView.as_view(), name='processForm'),
+    url(r'^$', views.UploadBillView.as_view(), name='inputForm'),
+    url(r'^process/$', views.ProcessBillView.as_view(), name='processForm'),
+    url(r'^info/(?P<uid>\d+)/$', views.InfoView.as_view(), name='info'),
 )
