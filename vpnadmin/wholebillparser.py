@@ -57,7 +57,7 @@ class WholeBillParser(object):
                     continue
                 s = re.search(thirrdPartyPay, line)
                 if s:
-                    self._extra['3rPartyPay'] = float(s.group('val').replace(',', '.'))
+                    self._extra['3rdPartyPay'] = float(s.group('val').replace(',', '.'))
                     continue
                 s = re.search(voiceRoaming, line)
                 if s:
