@@ -8,15 +8,17 @@ from invoices.models import CompanyInfo
 from django.contrib.auth.models import User
 from vpnadmin.models import PhoneServiceInfo
 
+
 def make_username_string(input_str):
     nkfd_form = unicodedata.normalize('NFKD', unicode(input_str))
     uname = u''.join([c for c in nkfd_form if not unicodedata.combining(c)])
     uname = uname.replace(' ', '')
     return uname.lower()
 
+
 class Command(BaseCommand):
 
-    help = u'load data from CSV' #@ReservedAssignment
+    help = u'load data from CSV'  # @ReservedAssignment
 
     def handle(self, *args, **options):
         logging.basicConfig(level=logging.INFO)
@@ -81,15 +83,15 @@ class Command(BaseCommand):
         ci.phone = telnum
 
         ci.save()
-        
+
     def _processPhoneInfo(self, user, freeMinutes, internet):
         try:
             pi = PhoneServiceInfo.objects.get(user=user)
         except PhoneServiceInfo.DoesNotExist:
             pi = PhoneServiceInfo(user=user)
-            
-        pi.minutes=freeMinutes
-        pi.internet=internet
+
+        pi.minutes = freeMinutes
+        pi.internet = internet
         pi.save()
 
     def readHeaders(self, row):

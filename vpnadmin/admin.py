@@ -7,9 +7,11 @@ from django.contrib import admin
 
 from .models import PhoneServiceInfo
 
+
 class PhoneServiceInfoAdmin(admin.ModelAdmin):
-    list_display = ('user', 'minutes', 'internet')
+    list_display = ('user', 'phone', 'minutes', 'internet')
     list_filter = ('internet', )
-    search_fields = ('user__last_name', )
-    
+    search_fields = ('user__last_name', 'user__companyinfo__phone')
+
+
 admin.site.register(PhoneServiceInfo, PhoneServiceInfoAdmin)

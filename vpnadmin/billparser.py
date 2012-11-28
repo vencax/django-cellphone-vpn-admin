@@ -5,7 +5,9 @@ Created on May 30, 2012
 '''
 import re
 
-pattern = '(?P<n1>[0-9]{3}) (?P<n2>[0-9]{3}) (?P<n3>[0-9]{3}) (?P<price>[0-9]{1,}),(?P<pricepart>[0-9]{2})'
+pattern = '(?P<n1>[0-9]{3}) (?P<n2>[0-9]{3}) (?P<n3>[0-9]{3}) \
+(?P<price>[0-9]{1,}),(?P<pricepart>[0-9]{2})'
+
 
 def parseBill(data):
     parsed = []

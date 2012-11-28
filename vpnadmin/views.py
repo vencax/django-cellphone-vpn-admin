@@ -31,16 +31,20 @@ MINUTE_PRICE = getattr(settings, 'MINUTE_PRICE', 1.5)
 INTERNET_PRICE = getattr(settings, 'INTERNET_PRICE', 66)
 FREE_SMS_RATIO = float(FREE_SMS_COUNT) / FREE_MINS_COUNT
 
+
 class BillUploadForm(forms.Form):
     bill = forms.FileField()
     day = forms.DateField(initial=datetime.date.today())
     billdata = forms.CharField(widget=Textarea)
 
+
 def getBillFileName(day):
     return day.strftime('%Y-%m.pdf')
 
+
 def getBillFilePath(day):
     return os.path.join(settings.MEDIA_ROOT, getBillFileName(day))
+
 
 def getBillUrl(day):
     return '%s%s' % (settings.MEDIA_URL, getBillFileName(day))
@@ -48,6 +52,7 @@ def getBillUrl(day):
 SESSION_KEY = 'parsedInfo'
 DATA_SK = 'dataInfo'
 DAY_SK = 'day'
+
 
 class UploadBillView(FormView):
     template_name = 'vpnadmin/uploaddata.html'
@@ -63,16 +68,17 @@ class UploadBillView(FormView):
         stringStream = StringIO.StringIO(form.cleaned_data['billdata'])
         parsed = parser.parse(stringStream)
         # save the bill file
-        
+
         day = form.cleaned_data['day']
         self.request.session[DAY_SK] = day
-        
+
         with open(getBillFilePath(day), 'w') as f:
             f.write(form.cleaned_data['bill'].read())
 
         self.request.session[SESSION_KEY] = parsed
 
         return HttpResponseRedirect(reverse('processForm'))
+
 
 class ProcessBillView(TemplateView):
     template_name = 'vpnadmin/dataProcessed.html'
@@ -86,10 +92,10 @@ class ProcessBillView(TemplateView):
         parsed = request.session.get(SESSION_KEY)
         data = {}
         total = {
-            'inVPN' : datetime.timedelta(),
-            'outVPN' : datetime.timedelta(),
-            'sms' : 0,
-            'extra' : 0
+            'inVPN': datetime.timedelta(),
+            'outVPN': datetime.timedelta(),
+            'sms': 0,
+            'extra': 0
         }
         for num, pinfo in parsed.items():
             timeInVPN, timeOutsideVPN, smsCount, extra, vpnSmsCount = pinfo
@@ -104,42 +110,44 @@ class ProcessBillView(TemplateView):
             inVPN = self._convertToTimeDelta(timeInVPN)
             outVPN = self._convertToTimeDelta(timeOutsideVPN)
             aboveFreeMins = self._convertToMinutes(outVPN) - phoneInfo.minutes
-                
+
             nonVPNSMS = smsCount - vpnSmsCount
             smsOver = nonVPNSMS - (phoneInfo.minutes * FREE_SMS_RATIO)
             if smsOver < 0:
                 smsOver = 0
-            
+
             if phoneInfo.internet:
                 del(extra['data'])
-            
+
             total['inVPN'] += inVPN
             total['outVPN'] += outVPN
             total['sms'] += nonVPNSMS
             total['extra'] += sum(extra.values())
-            
+
             if phoneInfo.internet:
-                pinfo[3]['data'] = INTERNET_PRICE 
-            
-            data[num] = (inVPN, outVPN, smsCount, cInfo, aboveFreeMins, 
+                pinfo[3]['data'] = INTERNET_PRICE
+
+            data[num] = (inVPN, outVPN, smsCount, cInfo, aboveFreeMins,
                          phoneInfo, extra, vpnSmsCount, smsOver)
-            
+
         total['inVPNMins'] = self._convertToMinutes(total['inVPN'])
         total['outVPNMins'] = self._convertToMinutes(total['outVPN'])
 
         expectedInvoicePrice = total['extra'] + 5526
         if total['outVPNMins'] > FREE_MINS_COUNT:
-            expectedInvoicePrice += ((total['outVPNMins'] - FREE_MINS_COUNT) * MINUTE_PRICE)
+            expectedInvoicePrice += \
+                ((total['outVPNMins'] - FREE_MINS_COUNT) * MINUTE_PRICE)
         if total['sms'] > FREE_SMS_COUNT:
-            expectedInvoicePrice += ((total['sms'] - FREE_SMS_COUNT) * SMS_PRICE)
-            
+            expectedInvoicePrice += \
+                ((total['sms'] - FREE_SMS_COUNT) * SMS_PRICE)
+
         request.session[DATA_SK] = data
 
         return self.render_to_response({
-            'billurl' : getBillUrl(request.session[DAY_SK]),
-            'parsed' : data,
-            'totals' : total,
-            'expectedInvoicePrice' : expectedInvoicePrice
+            'billurl': getBillUrl(request.session[DAY_SK]),
+            'parsed': data,
+            'totals': total,
+            'expectedInvoicePrice': expectedInvoicePrice
         })
 
     def post(self, request, *args, **kwargs):
@@ -150,10 +158,10 @@ class ProcessBillView(TemplateView):
 
         message = _('''%(count)i records processed OK.
 Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
-                                              'billurl' :billurl}
+                                              'billurl': billurl}
         del(request.session[DATA_SK])
         del(request.session[SESSION_KEY])
-        return self.render_to_response({'message' : message})
+        return self.render_to_response({'message': message})
 
     def processInvoices(self, invoices, billURL):
         for invoice, cinfo in invoices:
@@ -167,12 +175,12 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
                                   contractor.bankaccount)
 
             mailContent = render_to_string('vpnadmin/infoMail.html', {
-                'invoice' : invoice,
-                'state' : state.value,
-                'billURL' : billURL,
-                'price' : price,
+                'invoice': invoice,
+                'state': state.value,
+                'billURL': billURL,
+                'price': price,
                 'cinfo': cinfo,
-                'domain' : Site.objects.get_current(),
+                'domain': Site.objects.get_current(),
             })
             cinfo.user.email_user(ugettext('phone service info'),
                                          mailContent)
@@ -187,17 +195,18 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
         try:
             cinfo = CompanyInfo.objects.get(phone=telnum)
             psi = PhoneServiceInfo.objects.get(user=cinfo.user)
-            
-            (inVPN, outVPN, smsCount, cInfo, aboveFreeMins, #@UnusedVariable
-             phoneInfo, extra, vpnSmsCount, smsOver) = info #@UnusedVariable
+
+            (inVPN, outVPN, smsCount, cInfo, aboveFreeMins,  # @UnusedVariable
+             phoneInfo, extra, vpnSmsCount, smsOver) = info  # @UnusedVariable
 
             outsideVPN = self._convertToMinutes(outVPN)
             insideVPN = self._convertToMinutes(inVPN)
             minsOver = outsideVPN - psi.minutes
 
             invoice = {_('freeMins') + '(%i min)' % psi.minutes: psi.minutes,
-                       _('inVPN') + '(%i min)' % insideVPN : 0,
-                       _('free SMS') + '(%i ks)' % (psi.minutes * FREE_SMS_RATIO): 0,
+                       _('inVPN') + '(%i min)' % insideVPN: 0,
+                       _('free SMS') + '(%i ks)' % \
+                            (psi.minutes * FREE_SMS_RATIO): 0,
                        _('sms in vpn') + '(%i ks)' % vpnSmsCount: 0}
             if minsOver > 0:
                 p = minsOver * MINUTE_PRICE
@@ -220,14 +229,15 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
 
     def _convertToMinutes(self, time):
         return (time.days * 24 * 60) + (time.seconds / 60)
-    
+
+
 class InfoView(TemplateView):
     template_name = 'vpnadmin/info.html'
-    
+
     def get_context_data(self, **kwargs):
         chageRecords = CreditChangeRecord.objects.filter(user=self.user)
         return {'credRecords': chageRecords, 'vpnuser': self.user}
-        
+
     def get(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, id=kwargs['uid'])
         return super(InfoView, self).get(request, *args, **kwargs)
