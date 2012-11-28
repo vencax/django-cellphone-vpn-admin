@@ -17,6 +17,7 @@ smsRoaming = u'Celkem za Roaming - SMS [0-9]{1,} [^ ]{1,} [^ ]{1,} (?P<val>[0-9]
 data = u'Celkem za Data (?P<val>[0-9]{1,},[0-9]{2})'
 mmsRe = u'Celkem za MMS (?P<val>[0-9]{1,},[0-9]{2})'
 personInfoEndRe = u'Celkem za sluby Vodafone'
+barevneAInfoLinky = u'AU Barevné a informaèní linky [0-9]{1,} (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) [^%]{1,}% (?P<val>[0-9]{1,},[0-9]{2})'
 
 class WholeBillParser(object):
     def __init__(self):
@@ -58,6 +59,12 @@ class WholeBillParser(object):
                 s = re.search(thirrdPartyPay, line)
                 if s:
                     self._extra['3rdPartyPay'] = float(s.group('val').replace(',', '.'))
+                    continue
+                s = re.search(barevneAInfoLinky, line)
+                if s:
+                    v = float(s.group('val').replace(',', '.'))
+                    if v > 0:
+                        self._extra['barevneAInfoLinky'] = v 
                     continue
                 s = re.search(voiceRoaming, line)
                 if s:
