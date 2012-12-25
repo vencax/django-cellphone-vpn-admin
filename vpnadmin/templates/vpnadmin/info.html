@@ -15,9 +15,10 @@ td { border: 1px solid black; }
 {% endblock %}
 
 {% block content %}
-<h1>{% trans "phone service info" %} - {{ vpnuser.get_full_name }}</h1>
+<h1>{{ vpnuser.get_full_name }} - {% trans "phone service info" %}</h1>
 
 <p>Tel: {{ vpnuser.companyinfo.get.phone }}</p>
+<p>Kredit: {{ vpnuser.getCurrentCredit }}</p>
 
 <table>
 <tr>

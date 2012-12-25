@@ -8,7 +8,7 @@ from django.utils.translation import ugettext
 from django.conf import settings
 
 
-def on_new_credit(sender, vs, ss, amount, creditInfo, **kwargs):
+def on_new_credit(sender, vs, ss, amount, currency, **kwargs):
     """ Creates invoice with credit """
     userID = int(vs)
     companyInfo = CompanyInfo.objects.get(user__id=userID)

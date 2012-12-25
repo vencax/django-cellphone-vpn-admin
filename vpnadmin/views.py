@@ -235,8 +235,12 @@ class InfoView(TemplateView):
     template_name = 'vpnadmin/info.html'
 
     def get_context_data(self, **kwargs):
-        chageRecords = CreditChangeRecord.objects.filter(user=self.user)
-        return {'credRecords': chageRecords, 'vpnuser': self.user}
+        changeRecords = CreditChangeRecord.objects.filter(user=self.user)
+
+        return {
+            'credRecords': changeRecords,
+            'vpnuser': self.user
+        }
 
     def get(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, id=kwargs['uid'])
