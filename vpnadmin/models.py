@@ -21,7 +21,10 @@ class PhoneServiceInfo(models.Model):
         return 'PhoneServiceInfo of %s' % self.user.get_full_name()
 
     def phone(self):
-        return self.user.companyinfo.all()[0].phone
+        try:
+            return self.user.companyinfo.all()[0].phone
+        except IndexError:
+            return 0
     phone.short_description = _('phone')
 
 new_credit_arrived.connect(on_new_credit)
