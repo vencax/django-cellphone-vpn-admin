@@ -29,7 +29,7 @@ FREE_SMS_COUNT = getattr(settings, 'FREE_SMS_COUNT', 1000)
 SMS_PRICE = getattr(settings, 'SMS_PRICE', 1)
 MINUTE_PRICE = getattr(settings, 'MINUTE_PRICE', 1.5)
 INTERNET_PRICE = getattr(settings, 'INTERNET_PRICE', 66)
-FREE_SMS_RATIO = float(FREE_SMS_COUNT) / FREE_MINS_COUNT
+PROCESSING_FEE = getattr(settings, 'PROCESSING_FEE', 0)
 
 
 class BillUploadForm(forms.Form):
@@ -55,6 +55,9 @@ DAY_SK = 'day'
 
 
 class UploadBillView(FormView):
+    """
+    Form for input actual operator invoice content and invoice PDF.
+    """
     template_name = 'vpnadmin/uploaddata.html'
     form_class = BillUploadForm
 
@@ -81,6 +84,10 @@ class UploadBillView(FormView):
 
 
 class ProcessBillView(TemplateView):
+    """
+    Shows parsed operator invoice content in table along with
+    expected invoice price.
+    """
     template_name = 'vpnadmin/dataProcessed.html'
 
     @method_decorator(login_required)
@@ -112,7 +119,7 @@ class ProcessBillView(TemplateView):
             aboveFreeMins = self._convertToMinutes(outVPN) - phoneInfo.minutes
 
             nonVPNSMS = smsCount - vpnSmsCount
-            smsOver = nonVPNSMS - (phoneInfo.minutes * FREE_SMS_RATIO)
+            smsOver = nonVPNSMS - phoneInfo.smsCount
             if smsOver < 0:
                 smsOver = 0
 
@@ -203,17 +210,21 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
             insideVPN = self._convertToMinutes(inVPN)
             minsOver = outsideVPN - psi.minutes
 
-            invoice = {_('freeMins') + '(%i min)' % psi.minutes: psi.minutes,
-                       _('inVPN') + '(%i min)' % insideVPN: 0,
-                       _('free SMS') + '(%i ks)' % \
-                            (psi.minutes * FREE_SMS_RATIO): 0,
-                       _('sms in vpn') + '(%i ks)' % vpnSmsCount: 0}
+            invoice = {
+                _('freeMins') + '(%i min)' % psi.minutes: psi.minutes,
+                _('inVPN') + '(%i min)' % insideVPN: 0,
+                _('free SMS') + '(%i ks)' % psi.smsCount: 0,
+                _('sms in vpn') + '(%i ks)' % vpnSmsCount: 0
+            }
             if minsOver > 0:
                 p = minsOver * MINUTE_PRICE
                 invoice[_('extraMinutes') + '(%i min)' % minsOver] = p
             if smsOver > 0:
                 p = smsOver * SMS_PRICE
                 invoice[_('extraSMS') + '(%i ks)' % smsOver] = p
+
+            if PROCESSING_FEE:
+                invoice[_('processing fee')] = PROCESSING_FEE
 
             invoice.update(extra)
 
