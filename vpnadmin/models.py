@@ -15,6 +15,7 @@ class PhoneServiceInfo(models.Model):
     user = models.ForeignKey(User, unique=True,
                              related_name='phoneserviceinfo')
     minutes = models.IntegerField(_('free minutes'))
+    smsCount = models.IntegerField(_('sms count'))
     internet = models.IntegerField(_('has internet'), default=0)
 
     def __unicode__(self):
