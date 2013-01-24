@@ -3,13 +3,14 @@ Created on Jun 25, 2012
 
 @author: vencax
 '''
-from invoices.models import Invoice, Item
 from django.utils.translation import ugettext
 from django.conf import settings
 
 
 def on_new_credit(sender, companyInfo, amount, currency, **kwargs):
     """ Creates invoice with credit """
+    from invoices.models import Invoice, Item
+
     if companyInfo.id == settings.OUR_COMPANY_ID:
         return  # do not generate invoice to ourself
 
