@@ -1,11 +1,8 @@
 
-
-from creditservices.signals import new_credit_arrived
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-
-from .signals import on_new_credit
+from creditservices.signals import new_credit_arrived
 
 
 class PhoneServiceInfo(models.Model):
@@ -28,4 +25,6 @@ class PhoneServiceInfo(models.Model):
             return 0
     phone.short_description = _('phone')
 
+
+from .signals import on_new_credit
 new_credit_arrived.connect(on_new_credit)
