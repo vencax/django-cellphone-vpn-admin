@@ -13,9 +13,6 @@ from django.core.urlresolvers import reverse
 from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from creditservices.models import CreditChangeRecord
 
 from .bill_processing import data_processing
 from .bill_processing.wholebillparser import WholeBillParser
@@ -115,19 +112,3 @@ Bill is <a href="%(billurl)s">here</a>''') % {'count': len(invoices),
         del(request.session[DATA_SK])
         del(request.session[SESSION_KEY])
         return self.render_to_response({'message': message})
-
-
-class InfoView(TemplateView):
-    template_name = 'vpnadmin/info.html'
-
-    def get_context_data(self, **kwargs):
-        changeRecords = CreditChangeRecord.objects.filter(user=self.user)
-
-        return {
-            'credRecords': changeRecords,
-            'vpnuser': self.user
-        }
-
-    def get(self, request, *args, **kwargs):
-        self.user = get_object_or_404(User, id=kwargs['uid'])
-        return super(InfoView, self).get(request, *args, **kwargs)
