@@ -114,7 +114,7 @@ class WholeBillParser(object):
 if __name__ == '__main__':
     import os
     p = WholeBillParser()
-    with open(os.path.join(os.path.dirname(__file__), 'singlekokot.txt')) as f:
+    with open(os.path.join(os.path.dirname(__file__), 'testdata.txt')) as f:
         result = p.parse(f)
     i = 1
     for tel, info in result.items():
