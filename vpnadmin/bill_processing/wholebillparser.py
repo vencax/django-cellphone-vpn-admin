@@ -7,24 +7,20 @@ Created on May 30, 2012
 import re
 
 personInfoBeginRe = u'Telefonní èíslo (?P<tel>[0-9]{3} [0-9]{3} [0-9]{3}) '
-timeInVPNRe = u'Celkem za Skupinová volání [0-9]{1,} \
+timeInVPNRe = u'AUVPN firma neomezenì [0-9]{1,} \
 (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
-timOutsideVPNRe = u'Celkem za Hlasové sluby [0-9]{1,} \
+totalVoiceTime = u'Celkem za Hlasové sluby [0-9]{1,} \
 (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})'
-smsRe = u'Celkem za SMS sluby (?P<sms>[0-9]{1,})'
-vpnSMS = u'AU VPN firma neomezenì (?P<sms>[0-9]{1,}) 0,00'
+totalSMS = u'Celkem za SMS (?P<sms>[0-9]{1,})'
+vpnSMS = u'AUVPN firma neomezenì (?P<sms>[0-9]{1,}) 0,00 0,00 21 % 0,00'
 thirrdPartyPay = u'Celkem za Platby tøetím stranám [0-9]{1,} \
 ([0-9]{2}:[0-9]{2}:[0-9]{2} ){0,1}(?P<val>[0-9]{1,},[0-9]{2})'
-voiceRoaming = u'Celkem za Roaming - hlasové sluby [0-9]{1,} \
-(?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) [^ ]{1,} [^ ]{1,} \
-(?P<val>[0-9]{1,},[0-9]{2})'
-smsRoaming = u'Celkem za Roaming - SMS [0-9]{1,} [^ ]{1,} [^ ]{1,} \
-(?P<val>[0-9]{1,},[0-9]{2})'
 data = u'Celkem za Data (?P<val>[0-9]{1,},[0-9]{2})'
 mmsRe = u'Celkem za MMS (?P<val>[0-9]{1,},[0-9]{2})'
 personInfoEndRe = u'Celkem za sluby Vodafone'
 barevneAInfoLinky = u'AU Barevné a informaèní linky [0-9]{1,} \
 (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) [^%]{1,}% (?P<val>[0-9]{1,},[0-9]{2})'
+roaming = u'AUVodafone World Roaming [^%]{1,}% (?P<val>[0-9]{1,},[0-9]{2})'
 
 
 class WholeBillParser(object):
@@ -54,11 +50,11 @@ class WholeBillParser(object):
                 if s:
                     self._timeInVPN = s.group('time')
                     continue
-                s = re.search(timOutsideVPNRe, line)
+                s = re.search(totalVoiceTime, line)
                 if s:
                     self._timeOutsideVPN = s.group('time')
                     continue
-                s = re.search(smsRe, line)
+                s = re.search(totalSMS, line)
                 if s:
                     self._smsCount = int(s.group('sms'))
                     continue
@@ -77,15 +73,13 @@ class WholeBillParser(object):
                     if v > 0:
                         self._extra['barevneAInfoLinky'] = v
                     continue
-                s = re.search(voiceRoaming, line)
+                s = re.search(roaming, line)
                 if s:
-                    self._extra['voiceRoaming'] = \
-                        float(s.group('val').replace(',', '.'))
-                    continue
-                s = re.search(smsRoaming, line)
-                if s:
-                    self._extra['smsRoaming'] = \
-                        float(s.group('val').replace(',', '.'))
+                    val = round(float(s.group('val').replace(',', '.')))
+                    if 'roaming' not in self._extra:
+                        self._extra['roaming'] = val
+                    else:
+                        self._extra['roaming'] += val
                     continue
                 s = re.search(data, line)
                 if s:

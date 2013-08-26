@@ -39,7 +39,7 @@ def get_service_stats(parsed):
         'extra': 0
     }
     for num, pinfo in parsed.items():
-        timeInVPN, timeOutsideVPN, smsCount, extra, vpnSmsCount = pinfo
+        timeInVPN, totalTime, smsCount, extra, vpnSmsCount = pinfo
         try:
             cInfo = CompanyInfo.objects.get(phone=num)
             phoneInfo = PhoneServiceInfo.objects.get(user=cInfo.user)
@@ -50,7 +50,8 @@ def get_service_stats(parsed):
             raise DataProcessingError('Company (phone %s) not exists' % num)
 
         inVPN = _convertToTimeDelta(timeInVPN)
-        outVPN = _convertToTimeDelta(timeOutsideVPN)
+        totalTime = _convertToTimeDelta(totalTime)
+        outVPN = totalTime - inVPN
         aboveFreeMins = _convertToMinutes(outVPN) - phoneInfo.minutes
 
         nonVPNSMS = smsCount - vpnSmsCount
