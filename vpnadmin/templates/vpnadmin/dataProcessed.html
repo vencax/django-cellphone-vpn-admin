@@ -33,7 +33,7 @@ Vyparsovane info:
 	<th>{% trans 'time outside VPN' %}</th>
 	<th>{% trans 'extraMinutes' %}</th>
 	<th>{% trans 'sms count' %}</th>
-	<th>{% trans 'sms in vpn' %}</th>
+	<th>{% trans 'sms outside vpn' %}</th>
 	<th>{% trans 'extraSMS' %}</th>
 	<th>{% trans 'extras' %}</th>
 </tr>
@@ -54,9 +54,9 @@ Vyparsovane info:
 	<td colspan="2">TOTAL</td>
 	<td>{{ totals.inVPN }} ({{ totals.inVPNMins }} mins)</td>
 	<td>{{ totals.outVPN }} ({{ totals.outVPNMins }} mins)</td>
+	<td>_</td>
 	<td>{{ totals.sms }}</td>
-	<td>_</td>
-	<td>_</td>
+	<td>{{ totals.outSMS }}</td>
 	<td>_</td>
 	<td>{{ totals.extra }} CZK</td>
 </tr>

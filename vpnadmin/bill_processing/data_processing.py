@@ -36,6 +36,7 @@ def get_service_stats(parsed):
         'inVPN': datetime.timedelta(),
         'outVPN': datetime.timedelta(),
         'sms': 0,
+        'outSMS': 0,
         'extra': 0
     }
     for num, pinfo in parsed.items():
@@ -64,14 +65,15 @@ def get_service_stats(parsed):
 
         total['inVPN'] += inVPN
         total['outVPN'] += outVPN
-        total['sms'] += nonVPNSMS
+        total['sms'] += smsCount
+        total['outSMS'] += nonVPNSMS
         total['extra'] += sum(extra.values())
 
         if phoneInfo.internet:
             pinfo[3]['data'] = INTERNET_PRICE
 
         data[num] = (inVPN, outVPN, smsCount, cInfo, aboveFreeMins,
-                     phoneInfo, extra, vpnSmsCount, smsOver)
+                     phoneInfo, extra, nonVPNSMS, smsOver)
 
     total['inVPNMins'] = _convertToMinutes(total['inVPN'])
     total['outVPNMins'] = _convertToMinutes(total['outVPN'])
@@ -80,9 +82,9 @@ def get_service_stats(parsed):
     if total['outVPNMins'] > FREE_MINS_COUNT:
         expectedInvoicePrice += \
             ((total['outVPNMins'] - FREE_MINS_COUNT) * MINUTE_PRICE)
-    if total['sms'] > FREE_SMS_COUNT:
+    if total['outSMS'] > FREE_SMS_COUNT:
         expectedInvoicePrice += \
-            ((total['sms'] - FREE_SMS_COUNT) * SMS_PRICE)
+            ((total['outSMS'] - FREE_SMS_COUNT) * SMS_PRICE)
 
     return data, expectedInvoicePrice, total
 
